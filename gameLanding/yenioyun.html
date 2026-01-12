@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desert Samurai | Create Character</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        samurai: ['Cinzel Decorative', 'serif'],
+                        tech: ['Orbitron', 'sans-serif'],
+                    },
+                    colors: {
+                        'samurai-gold': '#eab308',
+                        'samurai-dark': '#0c0a09',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { background-color: #0c0a09; color: white; }
+        .bg-image {
+            background-image: url('https://images.unsplash.com/photo-1547406182-3830c5417088?q=80&w=2070&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            filter: brightness(0.3) grayscale(0.5);
+            position: absolute; inset: 0; z-index: -2;
+        }
+        
+        /* Input & Select Styling */
+        .cyber-input {
+            background: rgba(0,0,0,0.6);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #eab308;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 0.1em;
+            transition: all 0.3s;
+        }
+        .cyber-input:focus {
+            border-color: #eab308;
+            box-shadow: 0 0 15px rgba(234, 179, 8, 0.3);
+            outline: none;
+        }
+
+        /* Radio Card Styling */
+        .radio-card input:checked + div {
+            border-color: #eab308;
+            background: rgba(234, 179, 8, 0.1);
+            box-shadow: 0 0 15px rgba(234, 179, 8, 0.2);
+        }
+        .radio-card div:hover {
+            border-color: rgba(234, 179, 8, 0.5);
+        }
+    </style>
+</head>
+<body class="h-screen flex items-center justify-center relative overflow-hidden">
+
+    <div class="bg-image"></div>
+    <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black pointer-events-none"></div>
+
+    <!-- LOADER -->
+    <div id="page-loader" class="fixed inset-0 bg-black z-50 flex items-center justify-center">
+        <div class="text-samurai-gold font-tech animate-pulse tracking-widest">INITIALIZING NEURAL LINK...</div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="relative z-10 w-full max-w-4xl p-8 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+        
+        <!-- Left Side: Visual -->
+        <div class="hidden md:block text-right space-y-4">
+            <h1 class="text-6xl font-samurai text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 to-yellow-600">
+                INITIATE<br>PROTOCOL
+            </h1>
+            <p class="text-gray-400 font-tech text-sm tracking-wider max-w-sm ml-auto">
+                Define your identity within the simulation. Your choices will determine your survival probability in the wastes.
+            </p>
+            <div class="h-px w-32 bg-yellow-500/50 ml-auto"></div>
+        </div>
+
+        <!-- Right Side: Form -->
+        <div class="bg-black/40 backdrop-blur-md border border-white/10 p-8 rounded-sm">
+            <h2 class="text-2xl font-samurai text-white mb-6 border-b border-white/10 pb-4">CHARACTER PROFILE</h2>
+            
+            <form id="create-form" class="space-y-6">
+                
+                <!-- NAME -->
+                <div>
+                    <label class="block text-xs font-tech text-gray-400 mb-2 tracking-widest">CODENAME</label>
+                    <input type="text" id="username" required maxlength="12" 
+                        class="cyber-input w-full p-3 text-lg uppercase" placeholder="ENTER NAME">
+                </div>
+
+                <!-- PET SELECTION -->
+                <div>
+                    <label class="block text-xs font-tech text-gray-400 mb-2 tracking-widest">COMPANION DRONE</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <label class="radio-card cursor-pointer">
+                            <input type="radio" name="pet" value="hawk" class="hidden" checked>
+                            <div class="border border-white/20 p-3 text-center transition-all">
+                                <div class="text-2xl mb-1">🦅</div>
+                                <div class="text-[10px] font-tech text-gray-300">HAWK</div>
+                            </div>
+                        </label>
+                        <label class="radio-card cursor-pointer">
+                            <input type="radio" name="pet" value="wolf" class="hidden">
+                            <div class="border border-white/20 p-3 text-center transition-all">
+                                <div class="text-2xl mb-1">🐺</div>
+                                <div class="text-[10px] font-tech text-gray-300">WOLF</div>
+                            </div>
+                        </label>
+                        <label class="radio-card cursor-pointer">
+                            <input type="radio" name="pet" value="scorpion" class="hidden">
+                            <div class="border border-white/20 p-3 text-center transition-all">
+                                <div class="text-2xl mb-1">🦂</div>
+                                <div class="text-[10px] font-tech text-gray-300">SCORPION</div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- DIFFICULTY -->
+                <div>
+                    <label class="block text-xs font-tech text-gray-400 mb-2 tracking-widest">SIMULATION DIFFICULTY</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <label class="radio-card cursor-pointer">
+                            <input type="radio" name="difficulty" value="ronin" class="hidden" checked>
+                            <div class="border border-white/20 p-3 text-center transition-all">
+                                <div class="text-green-500 font-bold mb-1">I</div>
+                                <div class="text-[10px] font-tech text-gray-300">RONIN</div>
+                            </div>
+                        </label>
+                        <label class="radio-card cursor-pointer">
+                            <input type="radio" name="difficulty" value="samurai" class="hidden">
+                            <div class="border border-white/20 p-3 text-center transition-all">
+                                <div class="text-yellow-500 font-bold mb-1">II</div>
+                                <div class="text-[10px] font-tech text-gray-300">SAMURAI</div>
+                            </div>
+                        </label>
+                        <label class="radio-card cursor-pointer">
+                            <input type="radio" name="difficulty" value="shogun" class="hidden">
+                            <div class="border border-white/20 p-3 text-center transition-all">
+                                <div class="text-red-500 font-bold mb-1">III</div>
+                                <div class="text-[10px] font-tech text-gray-300">SHOGUN</div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- ACTIONS -->
+                <div class="pt-4 flex gap-4">
+                    <button type="button" id="cancel-btn" class="flex-1 py-3 border border-red-900/50 text-red-500 font-tech text-sm tracking-widest hover:bg-red-900/10">
+                        ABORT
+                    </button>
+                    <button type="submit" class="flex-1 py-3 bg-yellow-600/20 border border-yellow-500 text-yellow-500 font-tech text-sm tracking-widest hover:bg-yellow-600/40 hover:shadow-[0_0_20px_rgba(234,179,8,0.3)] transition-all">
+                        INITIALIZE
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = "http://127.0.0.1:5000";
+        const loader = document.getElementById("page-loader");
+        const form = document.getElementById("create-form");
+        const cancelBtn = document.getElementById("cancel-btn");
+
+        // --- PAGE LOAD (AUTH CHECK) ---
+        window.onload = async () => {
+            try {
+                // Backend'e sor: Oturum var mı ve bakiye yetiyor mu?
+                const res = await fetch(`${API_URL}/auth/me`, { credentials: 'include' });
+                
+                if (!res.ok) {
+                    // Yetkisiz veya Bakiye Yetersiz
+                    alert("PROTOCOL ERROR: Unauthorized Access or Insufficient Funds.");
+                    window.location.href = '../index.html';
+                    return;
+                }
+
+                // Her şey yolunda, loader'ı kaldır
+                loader.style.opacity = '0';
+                setTimeout(() => loader.style.display = 'none', 500);
+
+            } catch (error) {
+                console.error(error);
+                window.location.href = '../index.html';
+            }
+        };
+
+        // --- CANCEL ---
+        cancelBtn.onclick = () => {
+            window.location.href = 'gameLanding.html';
+        };
+
+        // --- SUBMIT ---
+        form.onsubmit = async (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById("username").value;
+            const pet = document.querySelector('input[name="pet"]:checked').value;
+            const difficulty = document.querySelector('input[name="difficulty"]:checked').value;
+
+            try {
+                const res = await fetch(`${API_URL}/game/create`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, pet, difficulty }),
+                    credentials: 'include'
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    // Başarılı, oyuna yönlendir
+                    alert(`IDENTITY CONFIRMED. WELCOME, ${username}.`);
+                    // Şimdilik ana menüye veya direkt level'a atabiliriz
+                    window.location.href = 'gameLanding.html'; 
+                } else {
+                    alert("Error: " + (data.error || "Creation failed"));
+                }
+
+            } catch (error) {
+                console.error(error);
+                alert("Network Error");
+            }
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VALDE | Simulation</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Rajdhani:wght@500;700&family=VT323&display=swap" rel="stylesheet">
+    
+    <!-- Phaser 3 -->
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        :root {
+            --valde-gold: #C5A059;
+            --valde-black: #050505;
+            --valde-glass: rgba(10, 10, 12, 0.85);
+        }
+
+        body { 
+            background-color: var(--valde-black); 
+            margin: 0; 
+            overflow: hidden;
+            font-family: 'Cinzel', serif;
+            user-select: none;
+        }
+        
+        #game-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        /* --- POST PROCESSING OVERLAYS --- */
+        .overlay {
+            position: absolute; inset: 0; pointer-events: none; z-index: 5;
+        }
+        
+        .scanlines {
+            background: linear-gradient(
+                to bottom,
+                rgba(255,255,255,0),
+                rgba(255,255,255,0) 50%,
+                rgba(0,0,0,0.1) 50%,
+                rgba(0,0,0,0.1)
+            );
+            background-size: 100% 4px;
+            opacity: 0.6;
+        }
+        
+        .vignette {
+            background: radial-gradient(circle, transparent 60%, black 100%);
+            opacity: 0.8;
+        }
+
+        /* --- UI ELEMENTS --- */
+        #ui-layer {
+            position: absolute; inset: 0; pointer-events: none; z-index: 10;
+            display: flex; flex-direction: column; justify-content: space-between;
+            padding: 24px;
+        }
+
+        /* Minimap Frame */
+        .minimap-container {
+            position: relative;
+            width: 220px;
+            height: 220px;
+            /* Phaser creates the camera view here via coordinates, we just frame it */
+        }
+        .minimap-frame {
+            position: absolute; top: -10px; left: -10px; right: -10px; bottom: -10px;
+            border: 2px solid var(--valde-gold);
+            clip-path: polygon(
+                0 0, 100% 0, 100% 20%, 90% 20%, 90% 100%, 
+                0 100%, 0 80%, 10% 80%, 10% 0
+            ); /* Tech shape */
+            box-shadow: 0 0 20px rgba(197, 160, 89, 0.2);
+            pointer-events: none;
+        }
+        .minimap-label {
+            position: absolute; bottom: -25px; right: 0;
+            font-family: 'Rajdhani', sans-serif;
+            color: var(--valde-gold);
+            font-size: 12px; letter-spacing: 2px;
+        }
+
+        /* Console Log */
+        #console-log {
+            width: 350px;
+            height: 200px;
+            background: linear-gradient(90deg, var(--valde-glass) 0%, rgba(0,0,0,0) 100%);
+            border-left: 3px solid var(--valde-gold);
+            padding: 15px;
+            font-family: 'VT323', monospace;
+            color: #a8bebb;
+            font-size: 18px;
+            line-height: 1.2;
+            text-shadow: 0 0 5px rgba(168, 190, 187, 0.5);
+            overflow: hidden;
+            display: flex; flex-direction: column; justify-content: flex-end;
+        }
+
+        /* RL Controls */
+        .rl-controls {
+            pointer-events: auto;
+            display: flex; gap: 40px;
+            align-self: center;
+            margin-bottom: 20px;
+        }
+
+        .cyber-btn {
+            position: relative;
+            background: transparent;
+            border: 1px solid var(--valde-gold);
+            color: var(--valde-gold);
+            padding: 12px 40px;
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            letter-spacing: 3px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            overflow: hidden;
+            text-shadow: 0 0 10px rgba(197, 160, 89, 0.5);
+        }
+        
+        .cyber-btn::before {
+            content: ''; position: absolute; inset: 0;
+            background: var(--valde-gold);
+            transform: scaleX(0); transform-origin: right;
+            transition: transform 0.4s ease;
+            z-index: -1;
+        }
+
+        .cyber-btn:hover::before {
+            transform: scaleX(1); transform-origin: left;
+        }
+        
+        .cyber-btn:hover {
+            color: black;
+            box-shadow: 0 0 30px rgba(197, 160, 89, 0.4);
+        }
+
+        .cyber-btn.punish {
+            border-color: #ef4444; color: #ef4444;
+        }
+        .cyber-btn.punish::before { background: #ef4444; }
+        .cyber-btn.punish:hover { 
+            color: black; box-shadow: 0 0 30px rgba(239, 68, 68, 0.4); 
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="game-container">
+        <!-- Post Processing -->
+        <div class="overlay scanlines"></div>
+        <div class="overlay vignette"></div>
+        
+        <!-- UI Layer -->
+        <div id="ui-layer">
+            
+            <!-- Top Section -->
+            <div class="flex justify-between w-full">
+                <!-- Minimap Area (Placeholder for visual frame) -->
+                <div class="minimap-container">
+                    <div class="minimap-frame"></div>
+                    <div class="minimap-label">SECTOR: ALPHA-9</div>
+                </div>
+
+                <!-- Console -->
+                <div id="console-log">
+                    > SYSTEM INIT... OK<br>
+                    > NEURAL LINK... STABLE<br>
+                    > PET AI MODEL: Q-LEARNING v1.0<br>
+                    <span class="text-yellow-500 animate-pulse">> AWAITING TEACHING DATA...</span>
+                </div>
+            </div>
+
+            <!-- Bottom Section (Controls) -->
+            <div class="rl-controls">
+                <button class="cyber-btn punish" onclick="window.gameEvent.emit('reward', -1)">
+                    DISCIPLINE
+                </button>
+                
+                <div class="flex flex-col items-center justify-center mx-4">
+                    <div class="text-[10px] text-gray-500 tracking-[0.3em]">AI REINFORCEMENT</div>
+                    <div class="w-full h-px bg-white/20 mt-2"></div>
+                </div>
+
+                <button class="cyber-btn" onclick="window.gameEvent.emit('reward', 1)">
+                    APPROVE
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="entities/Pet.js"></script>
+    <script src="scenes/MainScene.js"></script>
+    <script src="game.js"></script>
+
+</body>
+</html>

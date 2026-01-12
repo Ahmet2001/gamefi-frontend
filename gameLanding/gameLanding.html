@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desert Samurai | Main Menu</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        samurai: ['Cinzel Decorative', 'serif'],
+                        tech: ['Orbitron', 'sans-serif'],
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'sandstorm': 'sandstorm 20s linear infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        },
+                        sandstorm: {
+                            '0%': { backgroundPosition: '0 0' },
+                            '100%': { backgroundPosition: '1000px 0' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #0c0a09;
+            overflow: hidden;
+        }
+
+        .bg-image {
+            background-image: url('https://images.unsplash.com/photo-1515096788709-a3cf4ce0a4a6?q=80&w=2573&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            filter: brightness(0.4) sepia(0.3);
+            position: absolute;
+            inset: 0;
+            z-index: -2;
+        }
+
+        .sand-overlay {
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.1'/%3E%3C/svg%3E");
+            opacity: 0.4;
+            z-index: -1;
+            animation: sandstorm 30s linear infinite;
+            pointer-events: none;
+        }
+
+        .katana-btn {
+            position: relative;
+            clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%);
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .katana-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(234, 179, 8, 0.8), transparent);
+            transition: left 0.5s;
+            z-index: 1;
+        }
+
+        .katana-btn:hover::before {
+            left: 100%;
+        }
+
+        .katana-btn:hover {
+            transform: scale(1.05) skewX(-2deg);
+            background-color: rgba(234, 179, 8, 0.1); 
+            border-color: #eab308;
+            color: #eab308;
+            text-shadow: 0 0 15px rgba(234, 179, 8, 0.8);
+        }
+    </style>
+</head>
+<body class="text-white h-screen flex flex-col items-center justify-center relative">
+
+    <div class="bg-image"></div>
+    <div class="sand-overlay"></div>
+    <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black pointer-events-none"></div>
+
+    <div class="relative z-10 text-center w-full max-w-2xl px-4">
+        
+        <div class="mb-16 animate-float">
+            <h2 class="text-yellow-500/80 font-samurai text-2xl tracking-[1em] mb-2 opacity-80">
+                砂漠の侍
+            </h2>
+            <h1 class="text-6xl md:text-8xl font-samurai font-black text-transparent bg-clip-text bg-gradient-to-b from-yellow-200 to-yellow-700 drop-shadow-[0_5px_5px_rgba(0,0,0,0.8)]">
+                DESERT<br>SAMURAI
+            </h1>
+        </div>
+
+        <div class="flex flex-col gap-6 items-center w-full max-w-sm mx-auto">
+            
+            <!-- RESUME GAME -->
+            <button id="resume-game" 
+                class="katana-btn w-full py-4 px-8 border-2 border-yellow-500/40 bg-yellow-900/20 backdrop-blur-sm text-yellow-100 font-tech font-bold tracking-[0.2em] text-lg hover:border-yellow-400 group">
+                <span class="relative z-10 flex items-center justify-between w-full">
+                    RESUME
+                    <span class="text-yellow-500 opacity-100 group-hover:scale-125 transition-all">▶</span>
+                </span>
+            </button>
+            
+            <!-- NEW GAME -->
+            <button id="start-the-game" 
+                class="katana-btn w-full py-4 px-8 border-2 border-white/20 bg-black/50 backdrop-blur-sm text-white font-tech font-bold tracking-[0.2em] text-lg hover:border-yellow-500 group">
+                <span class="relative z-10 flex items-center justify-between w-full">
+                    NEW GAME
+                    <span class="text-yellow-500 opacity-0 group-hover:opacity-100 transition-opacity">►</span>
+                </span>
+            </button>
+
+            <!-- CONTROLS -->
+            <button class="katana-btn w-full py-4 px-8 border-2 border-white/20 bg-black/50 backdrop-blur-sm text-gray-300 font-tech font-bold tracking-[0.2em] text-lg hover:border-yellow-500 group">
+                <span class="relative z-10 flex items-center justify-between w-full">
+                    CONTROLS
+                    <span class="text-yellow-500 opacity-0 group-hover:opacity-100 transition-opacity">◆</span>
+                </span>
+            </button>
+
+            <!-- SETTINGS -->
+            <button class="katana-btn w-full py-4 px-8 border-2 border-white/20 bg-black/50 backdrop-blur-sm text-gray-300 font-tech font-bold tracking-[0.2em] text-lg hover:border-yellow-500 group">
+                <span class="relative z-10 flex items-center justify-between w-full">
+                    SETTINGS
+                    <span class="text-yellow-500 opacity-0 group-hover:opacity-100 transition-opacity">⚙</span>
+                </span>
+            </button>
+
+            <!-- EXIT -->
+            <button id="return" 
+                class="katana-btn w-full py-4 px-8 border-2 border-red-900/50 bg-black/50 backdrop-blur-sm text-red-400 font-tech font-bold tracking-[0.2em] text-lg hover:border-red-500 hover:text-red-500 hover:bg-red-900/10 group mt-4">
+                <span class="relative z-10 flex items-center justify-between w-full">
+                    EXIT
+                    <span class="opacity-0 group-hover:opacity-100 transition-opacity">✕</span>
+                </span>
+            </button>
+
+        </div>
+    </div>
+
+    <div class="absolute bottom-6 text-white/20 text-xs font-tech tracking-widest">
+        VER 1.0.4 • DESERT PROTOCOL
+    </div>
+
+    <script>
+        const API_URL = "http://127.0.0.1:5000";
+
+        const resumeBtn = document.getElementById("resume-game");
+        const newGameBtn = document.getElementById("start-the-game");
+        const exitBtn = document.getElementById("return");
+
+        // --- RESUME Logic ---
+        resumeBtn.onclick = async () => {
+            try {
+                // Backend'e sor: Oyun var mı?
+                const res = await fetch(`${API_URL}/game/profile`, { credentials: 'include' });
+                if (!res.ok) {
+                    if (res.status === 401 || res.status === 403) {
+                        alert("Access Denied: Please login from the main page.");
+                        window.location.href = '../index.html';
+                        return;
+                    }
+                    throw new Error("Server Error");
+                }
+
+                const data = await res.json();
+                
+                if (data.exists) {
+                    // Oyun varsa devam et (Örn: Level 1'e git)
+                    console.log("Resuming level:", data.level);
+                    // window.location.href = `level${data.level}.html`; 
+                    alert("Resuming Game... (Level implementation pending)");
+
+
+                    window.location.href = '/game/index.html';
+                } else {
+                    // Oyun yoksa uyar
+                    alert("No saved game found! Please create a NEW GAME first.");
+                }
+
+            } catch (error) {
+                console.error(error);
+                alert("Connection failed.");
+            }
+        };
+        
+        // --- NEW GAME Logic ---
+        newGameBtn.onclick = () => {
+            // Yeni Oyun Sayfasına Yönlendir
+            window.location.href = 'yenioyun.html';
+        };
+
+        // --- EXIT Logic ---
+        exitBtn.onclick = () => {
+            // Ana sayfaya dön
+            window.location.href = '../index.html';
+        };
+    </script>
+
+</body>
+</html>

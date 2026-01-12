@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VALDE | Reality Injected</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;800&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Solana Web3 -->
+    <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
+
+    <!-- Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Montserrat', 'sans-serif'],
+                        display: ['Cinzel', 'serif'],
+                    },
+                    colors: {
+                        valde: {
+                            black: '#050505',
+                            panel: '#0f0f0f',
+                            gold: '#C5A059',
+                            goldDim: '#8A7035',
+                            text: '#E0E0E0',
+                            border: 'rgba(197, 160, 89, 0.2)'
+                        }
+                    },
+                    backgroundImage: {
+                        // High-res, gritty, realistic backgrounds (No Neon)
+                        'hero': "url('https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070&auto=format&fit=crop')",
+                        'texture': "url('https://www.transparenttextures.com/patterns/cubes.png')"
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body { background-color: #050505; color: #E0E0E0; scroll-behavior: smooth; }
+        
+        /* Glass / Cinematic Panel */
+        .cinematic-panel {
+            background: rgba(15, 15, 15, 0.9);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--valde-border, rgba(197, 160, 89, 0.1));
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        /* Gold Button Styling */
+        .btn-valde {
+            background: linear-gradient(135deg, #C5A059 0%, #8A7035 100%);
+            color: #000;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-valde:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(197, 160, 89, 0.2);
+        }
+
+        .btn-valde::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
+        }
+        
+        .btn-valde:hover::after { left: 100%; }
+
+        /* Loader */
+        #app-loader {
+            position: fixed; inset: 0; background: #050505; z-index: 100;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: opacity 0.8s ease-out;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-valde-gold selection:text-black">
+
+    <!-- LOADER -->
+    <div id="app-loader">
+        <h1 class="text-6xl font-display text-white tracking-[0.2em] mb-4">VALDE</h1>
+        <div class="w-32 h-0.5 bg-gray-800 overflow-hidden relative">
+            <div class="absolute inset-0 bg-valde-gold w-1/2 animate-[ping_1.5s_ease-in-out_infinite]"></div>
+        </div>
+        <p class="mt-4 text-xs font-mono text-valde-gold uppercase tracking-widest">Injecting Reality...</p>
+    </div>
+
+    <!-- NAVBAR -->
+    <nav class="fixed top-0 w-full z-50 px-8 py-6 flex justify-between items-center bg-gradient-to-b from-black/90 to-transparent transition-all duration-500">
+        <div class="text-2xl font-display font-bold tracking-widest text-white">VALDE</div>
+        
+        <div class="flex items-center gap-8">
+            <button onclick="document.getElementById('vision').scrollIntoView()" class="hidden md:block text-xs uppercase tracking-[0.2em] hover:text-valde-gold transition-colors">Manifesto</button>
+            <button onclick="app.toggleWhitepaper()" class="text-xs uppercase tracking-[0.2em] hover:text-valde-gold transition-colors">Protocol</button>
+            
+            <!-- User Status -->
+            <div id="user-status" class="hidden flex items-center gap-4 pl-6 border-l border-white/10">
+                <span id="wallet-display" class="font-mono text-[10px] text-valde-gold tracking-wider border border-valde-gold/30 px-2 py-1"></span>
+                <button onclick="app.logout()" class="text-[10px] uppercase tracking-widest text-red-500 hover:text-red-400">Exit</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section class="relative h-screen flex items-center justify-center bg-hero bg-cover bg-center bg-fixed">
+        <div class="absolute inset-0 bg-black/40 z-0"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-black/60 z-10"></div>
+
+        <div class="relative z-20 text-center max-w-4xl px-4">
+            <p class="text-valde-gold tracking-[0.5em] text-xs md:text-sm mb-6 uppercase animate-pulse">Protocol Online</p>
+            <h1 class="text-5xl md:text-8xl font-display text-white font-bold mb-8 tracking-wide leading-tight drop-shadow-2xl">
+                REALITY<br><span class="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">INJECTED</span>
+            </h1>
+            <p class="text-gray-300 text-lg font-light tracking-wide mb-12 max-w-2xl mx-auto leading-relaxed">
+                The boundary between digital assets and physical consequence has dissolved. 
+                Welcome to the first high-fidelity extraction economy.
+            </p>
+            
+            <button onclick="document.getElementById('portal').scrollIntoView()" class="btn-valde px-12 py-5 text-sm rounded-sm shadow-2xl">
+                Initialize Link
+            </button>
+        </div>
+    </section>
+
+    <!-- VISION SECTION -->
+    <section id="vision" class="py-32 bg-[#050505] relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
+            <div class="order-2 md:order-1 relative">
+                <div class="absolute -inset-4 bg-valde-gold/5 blur-3xl rounded-full"></div>
+                <img src="https://images.unsplash.com/photo-1616588589676-60b30c39ed44?q=80&w=1770&auto=format&fit=crop" alt="Tactical Gear" class="relative z-10 rounded-sm grayscale hover:grayscale-0 transition-all duration-700 shadow-2xl border border-white/5">
+            </div>
+            
+            <div class="order-1 md:order-2">
+                <h2 class="text-4xl font-display text-white mb-8">Tangible <span class="text-valde-gold">Consequence</span></h2>
+                <div class="space-y-6 text-gray-400 font-light leading-relaxed">
+                    <p>VALDE rejects the neon-soaked aesthetics of traditional GameFi. We are building a gritty, grounded simulation where every bullet counts and every asset represents real-world value.</p>
+                    <p>Powered by Solana, enforced by code, driven by you.</p>
+                </div>
+                
+                <div class="mt-12 grid grid-cols-3 gap-6 border-t border-white/10 pt-8">
+                    <div>
+                        <div class="text-2xl text-white font-display">0.01s</div>
+                        <div class="text-xs text-gray-500 uppercase tracking-wider mt-1">Latency</div>
+                    </div>
+                    <div>
+                        <div class="text-2xl text-white font-display">100%</div>
+                        <div class="text-xs text-gray-500 uppercase tracking-wider mt-1">Ownership</div>
+                    </div>
+                    <div>
+                        <div class="text-2xl text-white font-display">RL</div>
+                        <div class="text-xs text-gray-500 uppercase tracking-wider mt-1">Integration</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PORTAL SECTION (Login) -->
+    <section id="portal" class="min-h-screen flex items-center justify-center relative py-24">
+        <!-- Background -->
+        <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop')] bg-cover bg-center grayscale opacity-20"></div>
+        <div class="absolute inset-0 bg-gradient-to-b from-[#050505] via-[#050505]/80 to-[#050505]"></div>
+
+        <div class="relative z-10 w-full max-w-5xl px-4">
+            
+            <!-- AUTH PANEL -->
+            <div id="login-section" class="hidden cinematic-panel max-w-md mx-auto p-12 text-center">
+                <div class="w-16 h-16 border border-valde-gold/30 rounded-full flex items-center justify-center mx-auto mb-8">
+                    <svg class="w-6 h-6 text-valde-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.131A8 8 0 008 8m0 0a8 8 0 00-8 8c0 2.472.345 4.865.99 7.131M8 8a8 8 0 0016 16c0-2.472-.345-4.865-.99-7.131"></path></svg>
+                </div>
+                
+                <h3 class="text-2xl font-display text-white mb-2 tracking-wide">AUTHENTICATE</h3>
+                <p class="text-gray-500 text-xs tracking-[0.2em] mb-10 uppercase">Connect to Solana Mainnet</p>
+                
+                <div class="space-y-6">
+                    <button id="connect-btn" onclick="app.connectWallet()" class="w-full py-4 btn-valde text-xs">
+                        Establish Connection
+                    </button>
+                    
+                    <div id="loading" class="hidden">
+                        <div class="flex justify-center mb-2">
+                            <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-valde-gold"></div>
+                        </div>
+                        <span class="text-valde-gold text-xs tracking-widest uppercase">Verifying Signature...</span>
+                    </div>
+                    
+                    <div id="login-error" class="hidden text-red-400 text-xs bg-red-900/10 border border-red-900/30 p-4 font-mono"></div>
+
+                    <div class="pt-8 border-t border-white/5 flex justify-between items-center text-xs">
+                        <span class="text-gray-600 uppercase tracking-wider">Required Stake</span>
+                        <span class="text-valde-gold font-mono">10 VALDE</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DASHBOARD PANEL -->
+            <div id="game-dashboard" class="hidden w-full animate-[fadeIn_0.5s_ease-out]">
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+                    
+                    <!-- Profile Card -->
+                    <div class="md:col-span-4 cinematic-panel p-8 flex flex-col justify-between min-h-[300px]">
+                        <div>
+                            <h2 class="text-lg font-display text-white mb-6 tracking-widest border-b border-valde-gold/20 pb-4">OPERATOR</h2>
+                            <div class="space-y-6">
+                                <div>
+                                    <div class="text-xs text-gray-500 uppercase tracking-wider mb-1">Status</div>
+                                    <div class="text-green-500 text-sm tracking-wide flex items-center gap-2">
+                                        <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> ACTIVE
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="text-xs text-gray-500 uppercase tracking-wider mb-2">Holdings</div>
+                                    <!-- TOKEN IMAGE INJECTION -->
+                                    <div id="token-balance" class="flex items-center gap-3 text-2xl text-white font-display">
+                                        <!-- JS will inject: <img src="landing/token.png"> 120 VALDE -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-[10px] text-gray-600 font-mono mt-8">ID: 882-ALPHA-NOVA</div>
+                    </div>
+
+                    <!-- Action Card -->
+                    <div class="md:col-span-8 cinematic-panel p-8 flex flex-col items-center justify-center text-center relative overflow-hidden">
+                        <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1626128795552-32b6e142e882?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center opacity-10 grayscale"></div>
+                        
+                        <div class="relative z-10">
+                            <h2 class="text-4xl md:text-5xl font-display text-white mb-6">DEPLOYMENT READY</h2>
+                            <p class="text-gray-400 mb-10 max-w-lg mx-auto font-light">
+                                Simulation parameters loaded. Physical assets linked. <br>
+                                Prepare for extraction.
+                            </p>
+                            <button onclick="app.startGame()" class="btn-valde px-16 py-6 text-sm shadow-[0_0_30px_rgba(197,160,89,0.15)]">
+                                Enter Simulation
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- PROTOCOL/WHITEPAPER MODAL -->
+    <div id="whitepaper-modal" class="hidden fixed inset-0 z-[60] flex items-center justify-center bg-black/95 backdrop-blur-xl p-4 transition-opacity duration-300">
+        <div class="cinematic-panel max-w-3xl w-full max-h-[80vh] overflow-y-auto p-12 relative border border-valde-gold/20">
+            <button onclick="app.toggleWhitepaper()" class="absolute top-6 right-6 text-gray-500 hover:text-white transition-colors">✕</button>
+            
+            <h2 class="text-3xl font-display text-white mb-8 border-b border-white/10 pb-6">VALDE PROTOCOL</h2>
+            
+            <div class="space-y-6 text-gray-300 font-light leading-relaxed">
+                <p><strong>01. THE VISION</strong><br>VALDE is not a game. It is a bridge. We utilize the Solana blockchain to verify digital ownership of physical assets.</p>
+                <p><strong>02. THE ECONOMY</strong><br>The ecosystem is powered by the VALDE token. Entry requires a minimum stake of 10 VALDE. This ensures a high-quality user base committed to the extraction loop.</p>
+                <p><strong>03. REAL LIFE INJECTION</strong><br>Damage in-game reflects degradation. Extraction secures ownership. Loss is permanent.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- External Script -->
+    <script>
+
+/**
+ * VALDE GameFi Protocol - Frontend Logic
+ * Handles Authentication, Solana Wallet Connection, and UI State.
+ */
+
+const API_URL = "http://127.0.0.1:5000";
+
+// Set to TRUE if you are testing without the Python backend running.
+const USE_MOCK_BACKEND = false; 
+
+class GameApp {
+    constructor() {
+        this.wallet = null;
+        this.publicKey = null;
+        
+        // UI Elements Cache
+        this.elements = {
+            appLoader: document.getElementById('app-loader'),
+            loginSection: document.getElementById('login-section'),
+            dashboard: document.getElementById('game-dashboard'),
+            connectBtn: document.getElementById('connect-btn'),
+            userStatus: document.getElementById('user-status'),
+            walletDisplay: document.getElementById('wallet-display'),
+            whitepaper: document.getElementById('whitepaper-modal'),
+            loading: document.getElementById('loading'),
+            balance: document.getElementById('token-balance'),
+            loginError: document.getElementById('login-error')
+        };
+        
+        this.init();
+    }
+
+    /**
+     * Initialize Application
+     * Check for existing session on load.
+     */
+    async init() {
+        await this.checkSession();
+        
+        // Smooth Loader Fade Out
+        if (this.elements.appLoader) {
+            this.elements.appLoader.style.opacity = '0';
+            setTimeout(() => {
+                this.elements.appLoader.style.display = 'none';
+            }, 800);
+        }
+    }
+
+    /**
+     * Check Backend Session (Direct Pass)
+     */
+    async checkSession() {
+        try {
+            const res = await fetch(`${API_URL}/auth/me`, {
+                method: 'GET',
+                credentials: 'include' // Sends HttpOnly Cookie
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+                this.handleLoginSuccess(data.wallet, data.balance);
+            } else if (res.status === 403) {
+                // Session exists but balance dropped below requirement
+                const data = await res.json();
+                this.showLogin(`PROTOCOL REJECTED: Insufficient Funds (${data.balance} < ${data.required})`);
+            } else {
+                // No session
+                this.showLogin();
+            }
+        } catch (error) {
+            console.error("Session check failed", error);
+            this.showLogin();
+        }
+    }
+
+    /**
+     * Connect Phantom Wallet & Sign Nonce & Login
+     * All-in-one function: Connect -> Sign -> Login
+     */
+    async connectWallet() {
+        this.elements.loginError.classList.add('hidden');
+        
+        if (!window.solana || !window.solana.isPhantom) {
+            alert("Protocol requires Phantom Wallet interface.");
+            window.open("https://phantom.app/", "_blank");
+            return;
+        }
+
+        try {
+            this.setLoading(true);
+            
+            // 1. Connect Wallet
+            const resp = await window.solana.connect();
+            this.publicKey = resp.publicKey.toString();
+
+            // 2. Get Nonce (Security Challenge)
+            const nonceRes = await fetch(`${API_URL}/auth/nonce`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ wallet: this.publicKey })
+            });
+            const { nonce } = await nonceRes.json();
+
+            // 3. Sign Message (Proof of Ownership)
+            const message = `VALDE Protocol Auth: ${nonce}`;
+            const encodedMessage = new TextEncoder().encode(message);
+            const signedMessage = await window.solana.signMessage(encodedMessage, "utf8");
+            const signatureBase64 = btoa(String.fromCharCode(...signedMessage.signature));
+
+            // 4. Submit Login
+            const loginRes = await fetch(`${API_URL}/auth/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    wallet: this.publicKey,
+                    nonce: nonce,
+                    signature: signatureBase64
+                }),
+                credentials: 'include'
+            });
+
+            const loginData = await loginRes.json();
+
+            if (!loginRes.ok) {
+                if (loginRes.status === 403) {
+                    throw new Error(`INSUFFICIENT FUNDS. Current: ${loginData.current_balance}, Required: ${loginData.required}`);
+                }
+                throw new Error(loginData.error || "Handshake Failed");
+            }
+
+            this.handleLoginSuccess(loginData.wallet, loginData.balance);
+
+        } catch (err) {
+            console.error(err);
+            this.elements.loginError.textContent = err.message;
+            this.elements.loginError.classList.remove('hidden');
+        } finally {
+            this.setLoading(false);
+        }
+    }
+
+    /**
+     * Handle Successful Auth State
+     */
+    handleLoginSuccess(wallet, balance) {
+        this.wallet = wallet;
+        
+        // Hide Login, Show Dashboard
+        this.elements.loginSection.classList.add('hidden');
+        this.elements.dashboard.classList.remove('hidden');
+        this.elements.userStatus.classList.remove('hidden');
+        
+        // Format Wallet
+        const shortWallet = wallet.slice(0, 4) + '...' + wallet.slice(-4);
+        this.elements.walletDisplay.textContent = shortWallet;
+        
+        // Inject Token Image & Balance
+        this.elements.balance.innerHTML = `
+            <img src="landing/token.png" alt="VALDE" class="w-8 h-8 object-contain drop-shadow-md">
+            <span>${balance} VALDE</span>
+        `;
+
+        // Scroll to dashboard if not already there
+        const portalSection = document.getElementById('portal');
+        if (portalSection) {
+            portalSection.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+
+    startGame() {
+        // Redirect to game client
+        window.location.href = "gameLanding/gameLanding.html";
+    }
+
+    showLogin(errorMessage = null) {
+        this.elements.loginSection.classList.remove('hidden');
+        this.elements.dashboard.classList.add('hidden');
+        this.elements.userStatus.classList.add('hidden');
+        
+        // Explicitly set button text to "LOGIN" as requested
+        if (this.elements.connectBtn) {
+            this.elements.connectBtn.textContent = "LOGIN";
+        }
+        
+        if (errorMessage) {
+            this.elements.loginError.textContent = errorMessage;
+            this.elements.loginError.classList.remove('hidden');
+        }
+    }
+
+    async logout() {
+        try {
+            await fetch(`${API_URL}/auth/logout`, { 
+                method: 'POST',
+                credentials: 'include'
+            });
+            window.location.reload();
+        } catch (error) {
+            console.error("Logout failed", error);
+        }
+    }
+
+    toggleWhitepaper() {
+        const modal = this.elements.whitepaper;
+        if (modal.classList.contains('hidden')) {
+            modal.classList.remove('hidden');
+        } else {
+            modal.classList.add('hidden');
+        }
+    }
+
+    setLoading(isLoading) {
+        if (isLoading) {
+            this.elements.connectBtn.classList.add('hidden');
+            this.elements.loading.classList.remove('hidden');
+        } else {
+            this.elements.connectBtn.classList.remove('hidden');
+            this.elements.loading.classList.add('hidden');
+        }
+    }
+}
+
+// Initialize on Load
+window.addEventListener('load', () => {
+    window.app = new GameApp();
+});
+
+
+
+    </script>
+</body>
+</html>
