@@ -4,3 +4,8 @@ dist/
 build/
 .env
 __pycache__/
+# Python virtual environment
+venv/
+__pycache__/
+*.pyc
+
