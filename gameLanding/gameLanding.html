@@ -166,19 +166,7 @@
     </div>
 
     <script>
-        // Dynamically set API URL based on environment
-    const API_URL = (() => {
-        const hostname = window.location.hostname;
-
-        if (hostname === "localhost" || hostname === "127.0.0.1") {
-            // Local development
-            return "http://127.0.0.1:5000";
-        } else {
-            // Production (Netlify or other hosting)
-            return "https://gamefi-backend-production-f9d3.up.railway.app";
-        }
-    })();
-
+        const API_URL = "https://gamefi-backend-production-f9d3.up.railway.app";
         const resumeBtn = document.getElementById("resume-game");
         const newGameBtn = document.getElementById("start-the-game");
         const exitBtn = document.getElementById("return");
