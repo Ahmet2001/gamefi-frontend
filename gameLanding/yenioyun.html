@@ -178,27 +178,37 @@
         const cancelBtn = document.getElementById("cancel-btn");
 
         // --- PAGE LOAD (AUTH CHECK) ---
+        // --- PAGE LOAD (AUTH CHECK) ---
         window.onload = async () => {
             try {
-                // Backend'e sor: Oturum var mı ve bakiye yetiyor mu?
-                const res = await fetch(`${API_URL}/auth/me`, { credentials: 'include' });
-                
-                if (!res.ok) {
-                    // Yetkisiz veya Bakiye Yetersiz
+                // Ask backend if session exists and balance is sufficient
+                const res = await fetch(`${API_URL}/auth/me`, {
+                    method: 'GET',
+                    credentials: 'include', // Important: allows sending cookies
+                });
+
+                const data = await res.json();
+
+                if (!res.ok || !data.authenticated) {
+                    // Unauthorized or insufficient funds
                     alert("PROTOCOL ERROR: Unauthorized Access or Insufficient Funds.");
                     window.location.href = '../index.html';
                     return;
                 }
 
-                // Her şey yolunda, loader'ı kaldır
+                // If authenticated, optionally refresh local state
+                console.log("User session active:", data.wallet, "Balance:", data.balance);
+
+                // Remove loader
                 loader.style.opacity = '0';
                 setTimeout(() => loader.style.display = 'none', 500);
 
             } catch (error) {
-                console.error(error);
+                console.error("Session check failed:", error);
                 window.location.href = '../index.html';
             }
         };
+
 
         // --- CANCEL ---
         cancelBtn.onclick = () => {
