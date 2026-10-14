@@ -23,6 +23,26 @@ const config = {
 
 const game = new Phaser.Game(config);
 
+// Persist each training signal; the pet continues to receive the local event.
+// Authentication is via the same-origin, HttpOnly session cookie.
+window.gameEvent.on('reward', async (reward) => {
+    if (reward !== 1 && reward !== -1) return;
+
+    try {
+        const response = await fetch('/api/game/feedback', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'same-origin',
+            body: JSON.stringify({ reward })
+        });
+        if (!response.ok) throw new Error('Feedback save failed: ' + response.status);
+        logAI(reward === 1 ? 'APPROVE feedback saved.' : 'DISCIPLINE feedback saved.');
+    } catch (error) {
+        console.error('Could not save training feedback', error);
+        logAI('Feedback was not saved. Check your session or connection.');
+    }
+});
+
 // Log Helper
 function logAI(msg) {
     const consoleDiv = document.getElementById('console-log');
