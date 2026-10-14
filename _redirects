@@ -1,0 +1,2 @@
+# Same-origin API proxy; keep this rule before any SPA catch-all.
+/api/*  https://gamefi-backend-production-f9d3.up.railway.app/:splat  200
